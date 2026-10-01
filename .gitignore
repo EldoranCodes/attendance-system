@@ -1,0 +1,21 @@
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/build/
+/dist/
+/.nb-gradle/
+
+# Compiled files
+*.class
+
+# IDE/user files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.local.properties
