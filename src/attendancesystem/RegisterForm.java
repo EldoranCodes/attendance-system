@@ -16,7 +16,72 @@ public class RegisterForm extends javax.swing.JFrame {
      */
     public RegisterForm() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        populateTimeComboBoxes();
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                new Main().setVisible(true);
+            }
+        });
     }
+
+    private void populateTimeComboBoxes() {
+        String[] times = {"06:00", "07:00", "08:00", "09:00", "10:00",
+            "11:00", "12:00", "13:00", "14:00", "15:00",
+            "16:00", "17:00", "18:00", "19:00", "20:00"};
+        timeInComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(times));
+        timeOutComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(times));
+    }
+
+    private String buildDays() {
+        java.util.List<String> codes = new java.util.ArrayList<>();
+        if (mondayCheckBox.isSelected()) {
+            codes.add("M");
+        }
+        if (TuesdayCheckBox.isSelected()) {
+            codes.add("T");
+        }
+        if (WednesdayCheckBox.isSelected()) {
+            codes.add("W");
+        }
+        if (jCheckBox2.isSelected()) {
+            codes.add("Th");
+        }
+        if (fridayCheckBox.isSelected()) {
+            codes.add("F");
+        }
+        if (saturdayCheckBox.isSelected()) {
+            codes.add("Sa");
+        }
+        if (sundayCheckBox.isSelected()) {
+            codes.add("Su");
+        }
+        return String.join(",", codes);
+    }
+
+    private void resetForm() {
+        studentIdTxtField.setText("");
+        firstNameTxtField.setText("");
+        lastNameTxtField.setText("");
+        emailTxtField.setText("");
+        mondayCheckBox.setSelected(false);
+        TuesdayCheckBox.setSelected(false);
+        WednesdayCheckBox.setSelected(false);
+        jCheckBox2.setSelected(false);
+        fridayCheckBox.setSelected(false);
+        saturdayCheckBox.setSelected(false);
+        sundayCheckBox.setSelected(false);
+        if (timeInComboBox.getItemCount() > 0) {
+            timeInComboBox.setSelectedIndex(0);
+        }
+        if (timeOutComboBox.getItemCount() > 0) {
+            timeOutComboBox.setSelectedIndex(0);
+        }
+    }
+
+    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,37 +97,35 @@ public class RegisterForm extends javax.swing.JFrame {
         jTextPane2 = new javax.swing.JTextPane();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextPane3 = new javax.swing.JTextPane();
-        jTextField1 = new javax.swing.JTextField();
+        studentIdTxtField = new javax.swing.JTextField();
         jScrollPane5 = new javax.swing.JScrollPane();
         jTextPane4 = new javax.swing.JTextPane();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        emailTxtField = new javax.swing.JTextField();
+        firstNameTxtField = new javax.swing.JTextField();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTextPane5 = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane7 = new javax.swing.JScrollPane();
         jTextPane6 = new javax.swing.JTextPane();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        mondayCheckBox = new javax.swing.JCheckBox();
         jScrollPane8 = new javax.swing.JScrollPane();
         jTextPane7 = new javax.swing.JTextPane();
         jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jCheckBox7 = new javax.swing.JCheckBox();
+        TuesdayCheckBox = new javax.swing.JCheckBox();
+        fridayCheckBox = new javax.swing.JCheckBox();
+        saturdayCheckBox = new javax.swing.JCheckBox();
+        sundayCheckBox = new javax.swing.JCheckBox();
+        WednesdayCheckBox = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        timeInComboBox = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        timeOutComboBox = new javax.swing.JComboBox<>();
+        resetFormBtn = new javax.swing.JButton();
+        registerStudent = new javax.swing.JButton();
         jScrollPane9 = new javax.swing.JScrollPane();
         jTextPane8 = new javax.swing.JTextPane();
-        jTextField4 = new javax.swing.JTextField();
-        jScrollPane10 = new javax.swing.JScrollPane();
-        jTextPane9 = new javax.swing.JTextPane();
-        jTextField5 = new javax.swing.JTextField();
+        lastNameTxtField = new javax.swing.JTextField();
+        backBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -76,18 +139,13 @@ public class RegisterForm extends javax.swing.JFrame {
         jTextPane3.setText("STUDENT ID");
         jScrollPane4.setViewportView(jTextPane3);
 
-        jTextField1.setEditable(false);
-        jTextField1.setText("12345");
+        studentIdTxtField.setEditable(false);
 
         jTextPane4.setEditable(false);
         jTextPane4.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jTextPane4.setText("STUDENT ID");
+        jTextPane4.setText("EMAIL");
         jTextPane4.setToolTipText("");
         jScrollPane5.setViewportView(jTextPane4);
-
-        jTextField2.setText("12345");
-
-        jTextField3.setText("12345");
 
         jTextPane5.setEditable(false);
         jTextPane5.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
@@ -100,7 +158,7 @@ public class RegisterForm extends javax.swing.JFrame {
         jTextPane6.setToolTipText("");
         jScrollPane7.setViewportView(jTextPane6);
 
-        jCheckBox1.setText("jCheckBox1");
+        mondayCheckBox.setText("Monday");
 
         jTextPane7.setEditable(false);
         jTextPane7.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
@@ -108,33 +166,33 @@ public class RegisterForm extends javax.swing.JFrame {
         jTextPane7.setToolTipText("");
         jScrollPane8.setViewportView(jTextPane7);
 
-        jCheckBox2.setText("jCheckBox1");
+        jCheckBox2.setText("Thursday");
 
-        jCheckBox3.setText("jCheckBox1");
+        TuesdayCheckBox.setText("Tuesday");
 
-        jCheckBox4.setText("jCheckBox1");
+        fridayCheckBox.setText("Friday");
 
-        jCheckBox5.setText("jCheckBox1");
+        saturdayCheckBox.setText("Saturday");
 
-        jCheckBox6.setText("jCheckBox1");
+        sundayCheckBox.setText("Sunday");
 
-        jCheckBox7.setText("jCheckBox1");
+        WednesdayCheckBox.setText("Wednesday");
 
         jLabel2.setText("TIME IN");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        timeInComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        timeInComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                timeInComboBoxActionPerformed(evt);
             }
         });
 
         jLabel3.setText("TIME OUT");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+        timeOutComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        timeOutComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox2ActionPerformed(evt);
+                timeOutComboBoxActionPerformed(evt);
             }
         });
 
@@ -150,28 +208,28 @@ public class RegisterForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jCheckBox4)
+                        .addComponent(fridayCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox5)
+                        .addComponent(saturdayCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox6))
+                        .addComponent(sundayCheckBox))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(timeInComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(45, 45, 45)
                         .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(timeOutComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jCheckBox1)
+                                .addComponent(mondayCheckBox)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jCheckBox3)))
+                                .addComponent(TuesdayCheckBox)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCheckBox2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox7)))
+                        .addComponent(WednesdayCheckBox)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -182,86 +240,92 @@ public class RegisterForm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox1)
+                            .addComponent(mondayCheckBox)
                             .addComponent(jCheckBox2)
-                            .addComponent(jCheckBox3)
-                            .addComponent(jCheckBox7))
+                            .addComponent(TuesdayCheckBox)
+                            .addComponent(WednesdayCheckBox))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox4)
-                            .addComponent(jCheckBox6)
-                            .addComponent(jCheckBox5)))
+                            .addComponent(fridayCheckBox)
+                            .addComponent(sundayCheckBox)
+                            .addComponent(saturdayCheckBox)))
                     .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(timeOutComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(timeInComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("RESET FORM");
+        resetFormBtn.setText("RESET FORM");
+        resetFormBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetFormBtnActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("REGISTER STUDENT");
+        registerStudent.setText("REGISTER STUDENT");
+        registerStudent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                registerStudentActionPerformed(evt);
+            }
+        });
 
         jTextPane8.setEditable(false);
         jTextPane8.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jTextPane8.setText("LAST NAME");
         jScrollPane9.setViewportView(jTextPane8);
 
-        jTextField4.setText("12345");
-
-        jTextPane9.setEditable(false);
-        jTextPane9.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jTextPane9.setText("LAST NAME");
-        jScrollPane10.setViewportView(jTextPane9);
-
-        jTextField5.setText("12345");
+        backBtn.setText("BACK");
+        backBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(188, 188, 188))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2))
+                        .addComponent(emailTxtField))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField3))
+                        .addComponent(firstNameTxtField))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1))
+                        .addComponent(studentIdTxtField))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
                                 .addGap(23, 23, 23)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(resetFormBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(35, 35, 35)
+                                .addComponent(registerStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 14, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField5)))
+                        .addComponent(lastNameTxtField)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(224, 224, 224))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -271,42 +335,101 @@ public class RegisterForm extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(jTextField1))
+                    .addComponent(studentIdTxtField))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane5)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(emailTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane6)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(firstNameTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane9)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane10)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lastNameTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13))
+                    .addComponent(registerStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(resetFormBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void timeInComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeInComboBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_timeInComboBoxActionPerformed
 
-    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+    private void timeOutComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeOutComboBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox2ActionPerformed
+    }//GEN-LAST:event_timeOutComboBoxActionPerformed
+
+    private void registerStudentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerStudentActionPerformed
+        // TODO add your handling code here:
+          String firstName = firstNameTxtField.getText().trim();
+        String lastName = lastNameTxtField.getText().trim();
+        String email = emailTxtField.getText().trim();
+        String days = buildDays();
+        String timeIn = (String) timeInComboBox.getSelectedItem();
+        String timeOut = (String) timeOutComboBox.getSelectedItem();
+
+        if (firstName.isEmpty() || lastName.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "First name and last name are required.",
+                    "Validation", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (days.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Select at least one day for the schedule.",
+                    "Validation", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (timeIn == null || timeOut == null || timeIn.compareTo(timeOut) >= 0) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Time in must be earlier than time out.",
+                    "Validation", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (email.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Email is required.",
+                    "Validation", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!email.contains("@")) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please enter a valid email address.",
+                    "Validation", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            int studentId = StudentDAO.registerStudent(firstName, lastName, email, days, timeIn, timeOut);
+            resetForm();
+            studentIdTxtField.setText(String.valueOf(studentId));
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Student registered successfully.\nStudent ID: " + studentId,
+                    "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } catch (java.sql.SQLException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Database error: " + ex.getMessage(),
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_registerStudentActionPerformed
+
+    private void resetFormBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetFormBtnActionPerformed
+        resetForm();
+    }//GEN-LAST:event_resetFormBtnActionPerformed
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        dispose();
+    }//GEN-LAST:event_backBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -344,21 +467,16 @@ public class RegisterForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox TuesdayCheckBox;
+    private javax.swing.JCheckBox WednesdayCheckBox;
+    private javax.swing.JButton backBtn;
+    private javax.swing.JTextField emailTxtField;
+    private javax.swing.JTextField firstNameTxtField;
+    private javax.swing.JCheckBox fridayCheckBox;
     private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JCheckBox jCheckBox7;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
@@ -367,11 +485,6 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JSlider jSlider1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
     private javax.swing.JTextPane jTextPane4;
@@ -379,6 +492,14 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JTextPane jTextPane6;
     private javax.swing.JTextPane jTextPane7;
     private javax.swing.JTextPane jTextPane8;
-    private javax.swing.JTextPane jTextPane9;
+    private javax.swing.JTextField lastNameTxtField;
+    private javax.swing.JCheckBox mondayCheckBox;
+    private javax.swing.JButton registerStudent;
+    private javax.swing.JButton resetFormBtn;
+    private javax.swing.JCheckBox saturdayCheckBox;
+    private javax.swing.JTextField studentIdTxtField;
+    private javax.swing.JCheckBox sundayCheckBox;
+    private javax.swing.JComboBox<String> timeInComboBox;
+    private javax.swing.JComboBox<String> timeOutComboBox;
     // End of variables declaration//GEN-END:variables
 }
