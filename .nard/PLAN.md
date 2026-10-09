@@ -1,10 +1,6 @@
 ATTENDANCE SYSTEM
 FLOW
 
-NOTE: This is the short overview. Detailed step-by-step flowcharts are in
-"SYSTEM DESIGN (diagrams)" section C below. Those diagrams are the source
-of truth.
-
 1. START
   AttendanceSystem launches Main form
 
@@ -24,11 +20,11 @@ of truth.
 
   Buttons:
     Register Student
-    Admin  [ABOLISHED - button may still exist in UI but does nothing]
+    Admin
 
 
 3. TIME IN/OUT
-  Find student using Student ID (auto-increment STUDENT.id, no student_number)
+  Find student using student_number
 
   If student is not found:
     Show Invalid Student ID
@@ -69,18 +65,21 @@ of truth.
     Student information
     Student schedule
 
-  Register student - save
+  Save student
+
   Return to Main
 
 
-5. ADMIN  [ABOLISHED - OUT OF SCOPE]
-  (kept for history only; feature removed from this learning project)
+5. ADMIN
+  Open AdminForm from Main
 
-  Was planned:
-    Open AdminForm from Main
-    Manage students: activate / deactivate
-    View attendance logs
-    Return to Main
+  Manage students:
+    Activate student
+    Deactivate student
+
+  View attendance logs
+
+  Return to Main
 
 
 6. RETURN
@@ -105,7 +104,6 @@ STUDENT
 SCHEDULE
   id - INT, PK, AI
   student_id - INT, FK to student.id, NOT NULL
-    NOTE: live DB actually has varchar(10000) and NO FK constraint (see R4)
   days - VARCHAR
     Store day codes: M, T, W, Th, F, Sa, Su
   time_in - (TIME or VARCHAR HH:MM)
@@ -115,12 +113,11 @@ SCHEDULE
 ATTENDANCE
   id - INT, PK, AI
   student_id - INT, FK to student.id, NOT NULL
-    NOTE: live DB has NO FK constraint (see R4)
   date - DATE, NOT NULL
-  time_in - TIME, NOT NULL (code inserts with SYSDATE/FROM_UNIXTIME)
-  time_out - TIME, NULL  -- NULL means still timed in
-  status - VARCHAR(10), NOT NULL
-    - values: PRESENT, LATE (after schedule validation)
+  time_in - TIME, NULL
+  time_out - TIME, NULL
+  status - VARCHAR, NULL
+    - values: PRESENT, LATE (after schedule valdiation)
 
 ---
 
@@ -200,7 +197,7 @@ Scope: the **Main** form search + time-in/out + today's-log table. Simple, no ov
 
 # SYSTEM DESIGN (diagrams)
 
-Status legend: `[DONE]` implemented and verified · `[TODO]` not started · `[?]` undecided · `[ABOLISHED]` removed from scope.
+Status legend: `[DONE]` implemented and verified · `[TODO]` not started · `[?]` undecided.
 
 ## A. COMPONENT DIAGRAM (text)
 
@@ -221,13 +218,13 @@ Status legend: `[DONE]` implemented and verified · `[TODO]` not started · `[?]
 │  │                  │  ADMIN      └──────────────┘            │
 │  │                  │────────────►┌──────────┐                │
 │  └────────┬─────────┘             │  Admin   │                │
-│           │  TIME IN/OUT          │[ABOLISHED│                │
+│           │  TIME IN/OUT          │  [TODO]  │                │
 │           │                       └────┬─────┘                │
 │           │                            │ EDIT STUDENT         │
 │           │                            ▼                      │
 │           │                       ┌──────────┐                │
 │           │                       │ EditUser │                │
-│           │                       │[ABOLISHED│                │
+│           │                       │  [TODO]  │                │
 │           │                       └──────────┘                │
 │           ▼                                                   │
 │  DATA ACCESS (DAO)                                            │
@@ -285,14 +282,13 @@ Notes
   │
   ▼
 [F1] Main: loadTodayLogs() ──► AttendanceDAO.getTodayLogs()
-  │        Screen: [Student ID ____] [TIME IN/OUT] [REGISTER STUDENT]
+  │        Screen: [Student ID ____] [TIME IN/OUT] [REGISTER STUDENT] [ADMIN]
   │                Today's log table (Student ID, Name, Time In, Time Out, Status)
   ▼
  ╔══════════════ which action? ══════════════╗
- ║                 │              │           ║
- ║                 ▼ A            ▼ B         ║
- ║            TIME IN/OUT       REGISTER      ║
- ║            (ADMIN branch abolished)        ║
+ ║            │            │                 ║
+ ▼ A          ▼ B          ▼ C               ║
+TIME IN/OUT   REGISTER     ADMIN            ║
 ```
 
 ### Flow A — Time In / Time Out  `[DONE]`
@@ -335,7 +331,7 @@ Notes
       ▼
 [B6] StudentDAO.registerStudent(...)  [one transaction]
         INSERT STUDENT (status 'a') ──► new id
-        INSERT SCHEDULE (student_id, days, time_in, time_out)
+        INSERT SCHEDULE (student_id, days, time_in, time_out)yes pelase
         COMMIT  (rollback on error)
       ▼
 [B7] success ──► show generated Student ID ?         <-- see Q7
@@ -370,8 +366,6 @@ Notes
   activate/deactivate are **out of scope**.
 - **Q10 — Time source: MySQL `SYSDATE()`.** Replace Java-generated `HH:mm:ss` and use
   DB time for `time_in` / `time_out` / late check.
-  **NOT YET IMPLEMENTED** — the Main plan and Flow A above still use Java `now`
-  (`SimpleDateFormat("HH:mm:ss")`). Migration is tracked in section F below.
 - **Q1 — Login form: PENDING / CONFLICT.** Answer said "log in form", but Admin is now
   abolished, so there is nothing to protect. Confirm whether login is dropped or kept
   (see remaining question R1).
@@ -386,23 +380,4 @@ R3. **LATE rule** — keep "any punch after `SCHEDULE.time_in` = LATE", or add a
     period and/or an ABSENT status?
 R4. **Schema fix** — live DB has `SCHEDULE.student_id` as `varchar(10000)` and no FK
     constraints. Change to `INT` + FK, or leave it?
-
-## F. REMAINING WORK
-
-Ordered list of what is left before this project can be considered finished:
-
-1. **SYSDATE() migration** (decided, not done)
-   - `AttendanceDAO.insertTimeIn` / `updateTimeOut`: replace Java `now` param with
-     `SYSDATE()` / `CURTIME()` in SQL.
-   - Late check in `Main.timeInOut()` must compare against DB time, not Java time.
-   - Update Flow A and the Main plan after verification.
-2. **Resolve R1 — login form** (keep or drop). If dropped: remove/disable the ADMIN
-   button so the UI matches this plan.
-3. **Resolve R2 — post-registration dialog** showing the generated Student ID.
-4. **Resolve R3 — LATE rule** (grace period? ABSENT status?) or explicitly keep as-is.
-5. **Resolve R4 — schema** (`SCHEDULE.student_id` to INT + FK, or document why not).
-6. **Cleanup decision** — delete unused `Admin.java`, `EditUser.java` and their `.form`
-   files, or leave them as dead code (note: deleting is cleaner for grading).
-7. **Final verification** — recompile with JDK 8 and run an end-to-end pass:
-   register → time in → time out → check table → next day.
 

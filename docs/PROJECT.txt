@@ -1,0 +1,145 @@
+ATTENDANCE SYSTEM - STUDENT GUIDE
+
+Project: attendance4 (Java Swing + MySQL attendance kiosk)
+Status: Core features working (register + time in/out). Admin features removed.
+
+
+WHAT THIS SYSTEM DOES
+
+    Register Student
+        Add a new student with name, email, weekly schedule (days + times) - DONE
+
+    Time In / Time Out
+        Student enters their ID, system records arrival or departure - DONE
+
+    Today's Log
+        Table shows everyone who timed in/out today with status - DONE
+
+    Admin / Reports
+        Removed - out of scope for this learning project - REMOVED
+
+
+HOW TO USE IT (FOR FRONT-DESK STAFF)
+
+1. Register a new student
+    Click REGISTER STUDENT
+    Fill in:
+        First Name (required)
+        Last Name (required)
+        Email (optional)
+        Days - check Mon / Tue / Wed / Thu / Fri / Sat / Sun
+        Time In - dropdown 06:00 to 20:00
+        Time Out - dropdown 06:00 to 20:00 (must be after Time In)
+    Click REGISTER STUDENT
+    Note: the system assigns an auto-increment ID, ask the student to remember it
+
+2. Time In / Time Out (daily use)
+    Student tells you their Student ID (the auto number from registration)
+    Type it in the Student ID box
+    Press Enter or click TIME IN / OUT
+    System checks:
+        ID exists? else "Invalid Student ID"
+        Student active? else "Student is not active"
+        Scheduled today? else "Student is not scheduled today"
+    If all good:
+        First punch today -> records Time In (status = PRESENT or LATE)
+        Already timed in, no time out -> records Time Out
+        Already timed out -> asks "Time out again?" -> overwrites Time Out
+
+3. See today's attendance
+    The table at the bottom auto-refreshes after each punch
+    Columns:
+        Student ID - their auto number
+        Name - First + Last
+        Time In - when they arrived
+        Time Out - when they left (blank if still inside)
+        Status - PRESENT or LATE (late = punched after their scheduled Time In)
+
+
+FOR DEVELOPERS / GRADERS
+
+Tech stack
+    Language: Java 8 (NetBeans project)
+    UI: Swing (NetBeans GUI builder .form files)
+    DB: MySQL 8 (AttendanceSystem database)
+    Driver: mysql-connector-j-9.2.0.jar (bundled in lib/)
+    Calendar: jcalendar-1.4.jar (bundled in lib/)
+    Build: build.xml (Ant)
+
+Key files
+    src/attendancesystem/
+        AttendanceSystem.java - main(), launches Main
+        Main.java - time in/out, today's log, register button [DONE]
+        RegisterForm.java - student registration form [DONE]
+        StudentDAO.java - register, findById, getSchedule [DONE]
+        AttendanceDAO.java - findToday, insertTimeIn, updateTimeOut, getTodayLogs [DONE]
+        DbConnection.java - reads global.properties, returns Connection [DONE]
+        Admin.java - generated stub, NOT USED
+        EditUser.java - generated stub, NOT USED
+        *.form - NetBeans GUI files (don't edit manually)
+
+Database (3 tables)
+    STUDENT
+        id (PK, AI)
+        first_name
+        last_name
+        email
+        status ('a' = active, 'd' = deactivated)
+
+    SCHEDULE
+        id (PK, AI)
+        student_id (FK)
+        days ('M,W,F')
+        time_in
+        time_out
+
+    ATTENDANCE
+        id (PK, AI)
+        student_id (FK)
+        date
+        time_in
+        time_out (NULL = still in)
+        status ('PRESENT' or 'LATE')
+
+How to run
+    Start MySQL 8, create database AttendanceSystem (run AttendanceSystem.sql)
+    Edit global.properties if needed (host/port/user/password)
+    Open project in NetBeans 8+ with JDK 8
+    Run AttendanceSystem.java
+
+Current open questions (decisions needed)
+    Login form? - was requested but Admin is removed, drop or keep?
+    After registration - show the new Student ID in a dialog?
+    LATE rule - keep "any punch after scheduled Time In = LATE", or add grace period / ABSENT status?
+    Schema fix - SCHEDULE.student_id is varchar(10000) in live DB, change to INT + FK?
+
+
+QUICK REFERENCE: TIME IN / OUT LOGIC
+
+    Student types ID + hits button
+        ID empty? -> "Please enter a Student ID."
+        Not a number? -> "Invalid Student ID."
+        Not in DB? -> "Invalid Student ID."
+        status != 'a'? -> "Student is not active."
+        No schedule today? -> "Student is not scheduled today."
+        OK -> check today's attendance row
+            None -> INSERT time_in = NOW(), status = (NOW > sched_in ? LATE : PRESENT)
+            time_out NULL -> UPDATE time_out = NOW()
+            time_out set -> confirm "Already timed out. Again?" -> UPDATE time_out = NOW()
+    Refresh table, clear ID field
+
+
+PROJECT STRUCTURE
+
+    attendance4/
+        src/attendancesystem/     - Java source
+        docs/
+            PLAN.md               - full technical plan
+            STUDENT_GUIDE.txt     - this file
+        lib/
+            mysql-connector-j-9.2.0.jar
+            jcalendar-1.4.jar
+        global.properties         - DB config (host, port, user, pass)
+        AttendanceSystem.sql      - DB schema + data
+        build.xml                 - Ant build
+        .nard/PLAN.md             - backup of plan

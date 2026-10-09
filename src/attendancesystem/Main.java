@@ -21,10 +21,13 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
-        
-        
-
-        
+        setupTable();
+        loadTodayLogs();
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timeInOut();
+            }
+        });
     }
 
     /**
@@ -43,7 +46,6 @@ public class Main extends javax.swing.JFrame {
         jTextPane2 = new javax.swing.JTextPane();
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
@@ -75,19 +77,12 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setText("ADMIN");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Student ID", "Time In", "Time Out", "Status"
             }
         ));
         jScrollPane2.setViewportView(jTable1);
@@ -101,9 +96,6 @@ public class Main extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,10 +107,8 @@ public class Main extends javax.swing.JFrame {
                                 .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 629, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane2))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -135,26 +125,146 @@ public class Main extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 523, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                .addGap(26, 26, 26))
+                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
+        timeInOut();
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        this.setVisible(false);
+        new RegisterForm().setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void setupTable() {
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{"Student ID", "Name", "Time In", "Time Out", "Status"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+    }
+
+    private void loadTodayLogs() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+        try {
+            for (Object[] row : AttendanceDAO.getTodayLogs()) {
+                model.addRow(row);
+            }
+        } catch (java.sql.SQLException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(),
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void timeInOut() {
+        String input = jTextField1.getText().trim();
+        if (input.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please enter a Student ID.",
+                    "Validation", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int studentId;
+        try {
+            studentId = Integer.parseInt(input);
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Invalid Student ID.",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            String[] student = StudentDAO.findById(studentId);
+            if (student == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Invalid Student ID.",
+                        "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!"a".equals(student[3])) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Student is not active.",
+                        "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String[] schedule = StudentDAO.getSchedule(studentId);
+            if (schedule == null || !hasDay(schedule[0], todayDayCode())) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Student is not scheduled today.",
+                        "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String now = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+
+            AttendanceDAO.Today today = AttendanceDAO.findToday(studentId);
+            if (today == null) {
+                String status = now.compareTo(schedule[1]) > 0 ? "LATE" : "PRESENT";
+                AttendanceDAO.insertTimeIn(studentId, now, status);
+                javax.swing.JOptionPane.showMessageDialog(this, "Time In recorded at " + now,
+                        "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            } else if (today.timeOut == null) {
+                AttendanceDAO.updateTimeOut(today.id, now);
+                javax.swing.JOptionPane.showMessageDialog(this, "Time Out recorded at " + now,
+                        "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                int choice = javax.swing.JOptionPane.showConfirmDialog(this,
+                        "Already timed out today. Time out again?", "Confirm",
+                        javax.swing.JOptionPane.YES_NO_OPTION);
+                if (choice == javax.swing.JOptionPane.YES_OPTION) {
+                    AttendanceDAO.updateTimeOut(today.id, now);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Time Out updated to " + now,
+                            "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+
+            loadTodayLogs();
+            jTextField1.setText("");
+        } catch (java.sql.SQLException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(),
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private boolean hasDay(String days, String code) {
+        if (days == null) {
+            return false;
+        }
+        for (String day : days.split(",")) {
+            if (day.trim().equalsIgnoreCase(code)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String todayDayCode() {
+        int day = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_WEEK);
+        switch (day) {
+            case java.util.Calendar.MONDAY:
+                return "M";
+            case java.util.Calendar.TUESDAY:
+                return "T";
+            case java.util.Calendar.WEDNESDAY:
+                return "W";
+            case java.util.Calendar.THURSDAY:
+                return "Th";
+            case java.util.Calendar.FRIDAY:
+                return "F";
+            case java.util.Calendar.SATURDAY:
+                return "Sa";
+            default:
+                return "Su";
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -197,7 +307,6 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
